@@ -1,125 +1,158 @@
+"""
+agent.py
+--------
+Climate Policy RAG Agent
+
+Uses a two-stage retrieval approach:
+  1. Always searches the internal corpus (ChromaDB + embeddings)
+  2. Optionally searches the web for recent/current information
+
+Author: Hema Sai Charan Bandi
+"""
+
 import json
 import os
-from groq import Groq
+
 from dotenv import load_dotenv
 from duckduckgo_search import DDGS
+from groq import Groq
 
 load_dotenv()
 
-TOOLS = [
-    {
-        "type": "function",
-        "function": {
-            "name": "retrieve_documents",
-            "description": "Search the internal climate policy corpus. Use this FIRST for any climate policy question.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "Search query to find relevant policy documents."
-                    }
-                },
-                "required": ["query"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "web_search",
-            "description": "Search the web for current information not in the corpus. Use when the question is about recent events, news, or topics outside the policy documents.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "Web search query."
-                    }
-                },
-                "required": ["query"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "list_documents",
-            "description": "List all available documents in the corpus.",
-            "parameters": {
-                "type": "object",
-                "properties": {}
-            }
-        }
-    }
+# ── Constants ────────────────────────────────────────────────────────────────
+
+MODEL = "llama-3.3-70b-versatile"
+TOP_K = 5  # number of corpus chunks to retrieve per query
+
+# Keywords that trigger a web search in addition to corpus retrieval
+WEB_TRIGGER_KEYWORDS = [
+    "latest", "today", "recent", "current",
+    "news", "summit", "2025", "2026"
 ]
 
-SYSTEM_PROMPT = """You are a powerful climate policy analyst assistant with two knowledge sources:
+SYSTEM_PROMPT = """You are a climate policy analyst assistant with two knowledge sources:
 
-1. INTERNAL CORPUS - 10 authoritative climate policy documents (Paris Agreement, IRA, IPCC AR6, EU Green Deal, Carbon Pricing, Environmental Justice, Renewable Energy, US NCA, Methane Policy, Climate Finance)
+1. INTERNAL CORPUS — 10 authoritative climate policy documents covering:
+   Paris Agreement, Inflation Reduction Act, IPCC AR6, EU Green Deal,
+   Carbon Pricing, Environmental Justice, Renewable Energy, US National
+   Climate Assessment, Methane Policy, and Climate Finance.
 
-2. WEB SEARCH - for current events, recent news, or topics outside the corpus
+2. WEB SEARCH — for current events, recent news, or topics not in the corpus.
 
 ## Rules
-- For climate policy questions: ALWAYS call retrieve_documents first
-- If corpus results are insufficient: use web_search to supplement
-- For non-climate questions or recent events: use web_search directly
-- Always cite your sources (document title or website)
-- Be precise with numbers, dates, and percentages
-- If combining corpus + web results, clearly distinguish the sources"""
+- Prioritize internal corpus documents when answering policy questions.
+- Use web results to supplement with recent or missing information.
+- Always cite your sources (document title or website name).
+- Be precise — include specific numbers, dates, and percentages.
+- If the answer is not in either source, say so clearly.
+"""
+
+
+# ── Agent ────────────────────────────────────────────────────────────────────
 
 class ClimateAgent:
+    """
+    Two-stage retrieval agent for climate policy Q&A.
+
+    Stage 1: Semantic search over internal ChromaDB corpus.
+    Stage 2: Optional DuckDuckGo web search for recent/current queries.
+    Both results are passed to the LLM for final answer synthesis.
+    """
+
     def __init__(self, vector_store):
+        """
+        Args:
+            vector_store: VectorStore instance with embedded policy documents.
+        """
         self.store = vector_store
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-    def _web_search(self, query):
+    # ── Private helpers ───────────────────────────────────────────────────────
+
+    def _needs_web_search(self, query: str) -> bool:
+        """Return True if the query contains keywords suggesting recent info."""
+        return any(kw in query.lower() for kw in WEB_TRIGGER_KEYWORDS)
+
+    def _web_search(self, query: str) -> list:
+        """
+        Search the web using DuckDuckGo.
+
+        Args:
+            query: Search query string.
+
+        Returns:
+            List of dicts with keys: title, snippet, url.
+        """
         try:
             with DDGS() as ddgs:
-                results = list(ddgs.text(query, max_results=4))
-            formatted = []
-            for r in results:
-                formatted.append({
+                raw = list(ddgs.text(query, max_results=4))
+            return [
+                {
                     "title": r.get("title", ""),
                     "snippet": r.get("body", ""),
                     "url": r.get("href", "")
-                })
-            return formatted
+                }
+                for r in raw
+            ]
         except Exception as e:
             return [{"error": f"Web search failed: {str(e)}"}]
 
-    def _execute_tool(self, name, inputs):
-        if name == "retrieve_documents":
-            results = self.store.retrieve(inputs["query"], top_k=5)
-            return json.dumps(results, indent=2)
-        elif name == "web_search":
-            results = self._web_search(inputs["query"])
-            return json.dumps(results, indent=2)
-        elif name == "list_documents":
-            with open("data/documents.json", encoding="utf-8") as f:
-                docs = json.load(f)
-            return json.dumps([{"id": d["id"], "title": d["title"],
-                                "source": d["source"]} for d in docs])
-        return json.dumps({"error": f"Unknown tool: {name}"})
+    def _build_context(self, query: str, corpus_docs: list, web_results: list) -> str:
+        """
+        Build the LLM prompt context from retrieved sources.
 
-    def run(self, query, on_step=None):
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": query}
-        ]
+        Args:
+            query: Original user question.
+            corpus_docs: Retrieved chunks from ChromaDB.
+            web_results: Results from DuckDuckGo (may be empty).
 
+        Returns:
+            Formatted context string for the LLM.
+        """
+        return f"""
+User Question: {query}
+
+--- Internal Policy Documents ---
+{json.dumps(corpus_docs, indent=2)}
+
+--- Web Search Results ---
+{json.dumps(web_results, indent=2) if web_results else "No web search performed."}
+
+Instructions:
+- Use internal documents as the primary source for policy facts.
+- Use web results only for recent events or information not in the corpus.
+- Clearly cite which source each fact comes from.
+"""
+
+    # ── Public API ────────────────────────────────────────────────────────────
+
+    def run(self, query: str, on_step=None) -> dict:
+        """
+        Run the agent for a given user query.
+
+        Args:
+            query: The user's question.
+            on_step: Optional callback function called after each step.
+                     Receives a dict with keys: type, tool, inputs, result, etc.
+
+        Returns:
+            dict with keys:
+                answer (str): Final answer from the LLM.
+                steps (list): All intermediate steps taken.
+                tokens_used (int): Total tokens consumed.
+                iterations (int): Number of retrieval steps performed.
+        """
         steps = []
-        total_tokens = 0
-        iterations = 0
-        final_answer = ""
 
-        def emit(event):
+        def emit(event: dict):
+            """Record a step and optionally notify the caller."""
             steps.append(event)
             if on_step:
                 on_step(event)
 
         emit({"type": "start", "query": query})
-                # STEP 1: retrieve from corpus
+
+        # ── Stage 1: Corpus retrieval (always) ───────────────────────────────
         emit({
             "type": "tool_call",
             "tool": "retrieve_documents",
@@ -127,20 +160,21 @@ class ClimateAgent:
             "iteration": 1
         })
 
-        docs = self.store.retrieve(query, top_k=5)
+        corpus_docs = self.store.retrieve(query, top_k=TOP_K)
 
         emit({
             "type": "tool_result",
             "tool": "retrieve_documents",
-            "result": docs,
+            "result": corpus_docs,
             "iteration": 1
         })
 
-        # STEP 2: optional web search
-        recent_keywords = ["latest", "today", "recent", "current", "news", "summit"]
-
+        # ── Stage 2: Web search (only for recent/current queries) ─────────────
         web_results = []
-        if any(k in query.lower() for k in recent_keywords):
+        iterations = 1
+
+        if self._needs_web_search(query):
+            iterations = 2
             emit({
                 "type": "tool_call",
                 "tool": "web_search",
@@ -157,23 +191,11 @@ class ClimateAgent:
                 "iteration": 2
             })
 
-        context = f"""
-User Question: {query}
-
-Internal Documents:
-{json.dumps(docs, indent=2)}
-
-Web Results:
-{json.dumps(web_results, indent=2)}
-
-Instructions:
-- Use internal documents when possible
-- Use web results for recent info
-- Always cite sources
-"""
+        # ── Stage 3: LLM synthesis ────────────────────────────────────────────
+        context = self._build_context(query, corpus_docs, web_results)
 
         response = self.client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=MODEL,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": context}
@@ -182,12 +204,11 @@ Instructions:
         )
 
         answer = response.choices[0].message.content or ""
-
         emit({"type": "final_answer", "answer": answer})
 
         return {
             "answer": answer,
             "steps": steps,
             "tokens_used": response.usage.total_tokens,
-            "iterations": 1
+            "iterations": iterations
         }

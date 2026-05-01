@@ -1,0 +1,21 @@
+# Climate Policy RAG Agent - Dependencies
+# Install with: pip install -r requirements.txt
+
+# LLM provider (free, fast)
+groq
+
+# Environment variable management
+python-dotenv
+
+# Vector database for semantic search
+chromadb
+
+# Local embedding model (no API needed)
+sentence-transformers
+
+# Web search for out-of-corpus queries
+duckduckgo-search
+
+# Web API server
+fastapi
+uvicorn
