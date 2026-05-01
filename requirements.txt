@@ -14,7 +14,7 @@ chromadb
 sentence-transformers
 
 # Web search for out-of-corpus queries
-duckduckgo-search
+ddgs
 
 # Web API server
 fastapi
