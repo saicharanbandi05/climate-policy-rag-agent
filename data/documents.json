@@ -1,0 +1,72 @@
+[
+  {
+    "id": "doc_001",
+    "title": "Paris Agreement – Key Provisions and Commitments (2015)",
+    "source": "UNFCCC Paris Agreement Summary",
+    "date": "2015-12-12",
+    "content": "The Paris Agreement, adopted in December 2015 under the United Nations Framework Convention on Climate Change (UNFCCC), represents a landmark international treaty on climate change. Its central aim is to limit global average temperature increases to well below 2 degrees Celsius above pre-industrial levels, and to pursue efforts to limit warming to 1.5 degrees Celsius. Countries are required to submit Nationally Determined Contributions (NDCs) every five years, with each successive NDC expected to be more ambitious than the last. The Agreement establishes a transparency framework to track progress and a goal of $100 billion per year in climate finance from developed to developing nations by 2020. As of 2024, 195 parties have ratified the agreement. Critics argue that current NDCs are insufficient to meet the 1.5C target."
+  },
+  {
+    "id": "doc_002",
+    "title": "Inflation Reduction Act – Climate and Energy Provisions (2022)",
+    "source": "U.S. Congressional Research Service",
+    "date": "2022-08-16",
+    "content": "The Inflation Reduction Act (IRA), signed into law by President Biden on August 16, 2022, represents the largest climate investment in U.S. history, allocating approximately $369 billion toward energy security and climate change programs over ten years. Key provisions include tax credits for clean energy technologies such as solar, wind, and battery storage; a $7,500 consumer tax credit for new electric vehicles; incentives for domestic clean energy manufacturing; and funding for methane reduction and environmental justice. The IRA is projected to reduce U.S. greenhouse gas emissions by approximately 40% below 2005 levels by 2030. The law includes $27 billion for a Greenhouse Gas Reduction Fund."
+  },
+  {
+    "id": "doc_003",
+    "title": "IPCC Sixth Assessment Report – Summary for Policymakers (2021-2022)",
+    "source": "Intergovernmental Panel on Climate Change",
+    "date": "2022-04-04",
+    "content": "The IPCC Sixth Assessment Report is unequivocal that human influence has warmed the climate at an unprecedented rate. Global surface temperature has already increased by approximately 1.1 degrees Celsius above pre-industrial levels. Every region is experiencing changes in climate extremes including heatwaves, heavy precipitation, droughts, and tropical cyclones. Limiting warming to 1.5 degrees Celsius requires global CO2 emissions to reach net-zero by around 2050. Without rapid action, warming of 1.5 degrees Celsius could be reached as early as 2030. Key mitigation strategies include transitioning to renewable energy, electrifying transportation, improving energy efficiency, and deploying carbon capture."
+  },
+  {
+    "id": "doc_004",
+    "title": "European Union Green Deal – Policy Framework and Targets (2019-2023)",
+    "source": "European Commission",
+    "date": "2023-03-15",
+    "content": "The European Green Deal, launched in December 2019, is the EU strategy to make Europe the world's first climate-neutral continent by 2050. The European Climate Law legally binds the EU to net-zero emissions by 2050 and an interim target of at least 55% reduction in net greenhouse gas emissions below 1990 levels by 2030. The Fit for 55 package covers emissions trading, renewable energy targets of 42.5% share by 2030, energy efficiency improvements, and a carbon border adjustment mechanism. The EU emissions trading system covers around 40% of total EU emissions with carbon prices reaching over 100 euros per tonne in 2023."
+  },
+  {
+    "id": "doc_005",
+    "title": "Carbon Pricing Mechanisms – Global Status Report (2023)",
+    "source": "World Bank Carbon Pricing Dashboard",
+    "date": "2023-05-23",
+    "content": "As of 2023, 73 carbon pricing instruments are in operation worldwide, covering approximately 23% of global greenhouse gas emissions. These include 36 emissions trading systems and 37 carbon taxes. The global weighted average carbon price remains around $5 per tonne of CO2, far below the $50-100 per tonne deemed necessary to meet Paris Agreement goals. Revenue from carbon pricing reached a record $95 billion in 2022. Notable systems include the EU ETS, Canada's federal carbon pricing system at $65 CAD per tonne, California's cap-and-trade program, and China's national ETS covering the power sector."
+  },
+  {
+    "id": "doc_006",
+    "title": "Environmental Justice and Climate Policy – Equity Considerations",
+    "source": "EPA Office of Environmental Justice",
+    "date": "2023-01-27",
+    "content": "Environmental justice has emerged as a central pillar of U.S. climate policy. Executive Order 14008 established the Justice40 Initiative, which aims to direct 40% of the benefits of federal climate and clean energy investments to disadvantaged communities. These communities including low-income, communities of color, Indigenous, and rural populations disproportionately bear the burdens of pollution and climate impacts. The IRA environmental justice provisions include $3 billion for EJ grants and targeted funding for clean ports and pollution monitoring in frontline communities."
+  },
+  {
+    "id": "doc_007",
+    "title": "Renewable Energy Transition – Costs, Jobs, and Grid Reliability (2023)",
+    "source": "International Renewable Energy Agency (IRENA)",
+    "date": "2023-09-12",
+    "content": "Renewable energy now represents the cheapest source of new electricity generation in most of the world. The levelized cost of electricity from utility-scale solar PV has fallen over 90% since 2010, and onshore wind by nearly 70%. In 2022, global renewable energy capacity additions hit a record 295 GW. The energy transition is projected to create 38 million jobs in clean energy by 2030, while approximately 6 million fossil fuel jobs will be displaced. Grid reliability concerns are manageable through demand response, battery storage, and transmission expansion."
+  },
+  {
+    "id": "doc_008",
+    "title": "U.S. National Climate Assessment – Impacts, Risks, and Adaptation (2023)",
+    "source": "U.S. Global Change Research Program",
+    "date": "2023-11-14",
+    "content": "The Fifth National Climate Assessment finds that climate change is already causing widespread and costly disruptions across every U.S. region. Economic damages from climate-related disasters exceeded $165 billion in 2022. Key impacts include increased hurricane intensity and flooding in the Southeast, worsening drought and wildfire in the West, shifting agricultural conditions in the Midwest, and accelerating sea-level rise in coastal areas. Health impacts include increased heat-related illness, expanded vector-borne diseases, and worsened air quality from wildfires."
+  },
+  {
+    "id": "doc_009",
+    "title": "Global Methane Pledge and Non-CO2 Climate Policy (2021-2023)",
+    "source": "Global Methane Pledge Secretariat / UNEP",
+    "date": "2023-06-01",
+    "content": "Methane is a potent greenhouse gas with a global warming potential approximately 80 times greater than CO2 over a 20-year period, accounting for roughly 30% of current global warming. The Global Methane Pledge launched at COP26 includes over 150 countries committed to reducing methane emissions by at least 30% below 2020 levels by 2030. Primary sources include the oil and gas sector, agriculture, and waste. The IRA included $1.5 billion for methane reduction and a first-ever U.S. methane fee on excess emissions from oil and gas operations beginning in 2024."
+  },
+  {
+    "id": "doc_010",
+    "title": "Climate Finance and Developing Nations – Gaps, Pledges, and Loss and Damage (2022-2023)",
+    "source": "OECD Climate Finance Report / COP28 Outcomes",
+    "date": "2023-12-13",
+    "content": "Climate finance remains one of the most contentious issues in international climate negotiations. The developed countries pledge of $100 billion per year by 2020 was not met until 2022. At COP27, a historic agreement established a Loss and Damage fund for climate impacts beyond adaptation capacity. At COP28 in Dubai in 2023, the Loss and Damage Fund was operationalized with initial pledges of approximately $700 million, widely seen as insufficient relative to estimated annual costs of $400 billion in developing countries by 2030. Developing nations are calling for $1 trillion or more per year in public climate finance."
+  }
+]
