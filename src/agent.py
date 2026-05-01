@@ -14,7 +14,7 @@ import json
 import os
 
 from dotenv import load_dotenv
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from groq import Groq
 
 load_dotenv()
@@ -71,7 +71,9 @@ class ClimateAgent:
 
     def _needs_web_search(self, query: str) -> bool:
         """Return True if the query contains keywords suggesting recent info."""
-        return any(kw in query.lower() for kw in WEB_TRIGGER_KEYWORDS)
+        result = any(kw in query.lower() for kw in WEB_TRIGGER_KEYWORDS)
+        print(f"  Web search needed: {result} for query: '{query}'")
+        return result
 
     def _web_search(self, query: str) -> list:
         """
